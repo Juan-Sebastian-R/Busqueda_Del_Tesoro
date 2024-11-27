@@ -12,6 +12,8 @@ package com.mycompany.busqueda_del_tesoro;
 public class Busqueda_Del_Tesoro {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        BTesoro frame = new BTesoro();
+        frame.setVisible(true);
+        frame.setSize(700, 700);
     }
 }
