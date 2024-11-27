@@ -4,17 +4,31 @@
  */
 package com.mycompany.busqueda_del_tesoro;
 
+import javax.swing.table.DefaultTableModel;
+import java.util.Random;
+
 /**
  *
  * @author Juan Sebastian
  */
 public class BTesoro extends javax.swing.JFrame {
 
+    DefaultTableModel Modelo;
+
     /**
      * Creates new form BTesoro
      */
     public BTesoro() {
         initComponents();
+        CrearModelo();
+    }
+
+    public void CrearModelo() {
+        String[][] matriz = new String[7][7];
+        llenarMatriz(matriz, 0, 0, 5, 10);
+//        Modelo = new DefaultTableModel(null, matriz);
+        Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7"});
+        Mapa.setModel(Modelo);
     }
 
     /**
@@ -30,7 +44,7 @@ public class BTesoro extends javax.swing.JFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        Mapa = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
@@ -52,7 +66,7 @@ public class BTesoro extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setText("Busqueda Del Tesoro");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        Mapa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -63,7 +77,7 @@ public class BTesoro extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(Mapa);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setText("SCORE");
@@ -229,30 +243,6 @@ public class BTesoro extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BTesoro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BTesoro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BTesoro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BTesoro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new BTesoro().setVisible(true);
@@ -260,7 +250,52 @@ public class BTesoro extends javax.swing.JFrame {
         });
     }
 
+    // Función recursiva para llenar la matriz
+    public static void llenarMatriz(String[][] matriz, int fila, int col, int tesorosRestantes, int trampasRestantes) {
+        if (fila == 7) {
+            return; // Caso base: hemos llenado todas las filas
+        }
+
+        if (fila == 0 && col == 0) {
+            matriz[fila][col] = " ";
+        } else {
+            Random random = new Random();
+            String valor = " ";
+            if (tesorosRestantes > 0 && trampasRestantes > 0) {
+                int aleatorio = random.nextInt(3); // 0: vacío, 1: tesoro, 2: trampa
+                if (aleatorio == 1) {
+                    valor = "T";
+                    tesorosRestantes--;
+                } else if (aleatorio == 2) {
+                    valor = "X";
+                    trampasRestantes--;
+                }
+            } else if (tesorosRestantes > 0) {
+                if (random.nextBoolean()) { // Probabilidad de colocar tesoro
+                    valor = "T";
+                    tesorosRestantes--;
+                }
+            } else if (trampasRestantes > 0) {
+                if (random.nextBoolean()) { // Probabilidad de colocar trampa
+                    valor = "X";
+                    trampasRestantes--;
+                }
+            }
+        
+            matriz[fila][col] = valor;
+        }
+            // Avanzar al siguiente elemento de la matriz
+            if (col < 6) {
+                llenarMatriz(matriz, fila, col + 1, tesorosRestantes, trampasRestantes);
+            } else {
+                llenarMatriz(matriz, fila + 1, 0, tesorosRestantes, trampasRestantes);
+            }
+        }
+    
+    // Función para imprimir la matriz
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable Mapa;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -277,7 +312,6 @@ public class BTesoro extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSlider jSlider1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
