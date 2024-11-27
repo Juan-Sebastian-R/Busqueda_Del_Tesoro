@@ -25,8 +25,8 @@ public class BTesoro extends javax.swing.JFrame {
 
     public void CrearModelo() {
         String[][] matriz = new String[7][7];
-        llenarMatriz(matriz, 0, 0, 5, 10);
-//        Modelo = new DefaultTableModel(null, matriz);
+        inicializarMatriz(matriz);
+        llenarMatriz(matriz, 0, 0, 5, 7);
         Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7"});
         Mapa.setModel(Modelo);
     }
@@ -251,46 +251,80 @@ public class BTesoro extends javax.swing.JFrame {
     }
 
     // Función recursiva para llenar la matriz
+public static void inicializarMatriz(String[][] matriz) {
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                matriz[i][j] = " ";
+            }
+        }
+    }
+
+    // Función recursiva para llenar la matriz
     public static void llenarMatriz(String[][] matriz, int fila, int col, int tesorosRestantes, int trampasRestantes) {
         if (fila == 7) {
-            return; // Caso base: hemos llenado todas las filas
+            return; // Caso base: se llenaron todas las filas
         }
 
+        // Si es la casilla inicial, garantizamos que esté vacía
         if (fila == 0 && col == 0) {
             matriz[fila][col] = " ";
         } else {
             Random random = new Random();
             String valor = " ";
-            if (tesorosRestantes > 0 && trampasRestantes > 0) {
-                int aleatorio = random.nextInt(3); // 0: vacío, 1: tesoro, 2: trampa
-                if (aleatorio == 1) {
+            if (tesorosRestantes > 0 || trampasRestantes > 0) {
+                if (tesorosRestantes > 0 && trampasRestantes > 0) {
+                    int aleatorio = random.nextInt(3); // 0: vacío, 1: tesoro, 2: trampa
+                    if (aleatorio == 1 && puedeColocar(matriz, fila, col, "T")) {
+                        valor = "T";
+                        tesorosRestantes--;
+                    } else if (aleatorio == 2 && puedeColocar(matriz, fila, col, "X")) {
+                        valor = "X";
+                        trampasRestantes--;
+                    }
+                } else if (tesorosRestantes > 0 && puedeColocar(matriz, fila, col, "T")) {
                     valor = "T";
                     tesorosRestantes--;
-                } else if (aleatorio == 2) {
-                    valor = "X";
-                    trampasRestantes--;
-                }
-            } else if (tesorosRestantes > 0) {
-                if (random.nextBoolean()) { // Probabilidad de colocar tesoro
-                    valor = "T";
-                    tesorosRestantes--;
-                }
-            } else if (trampasRestantes > 0) {
-                if (random.nextBoolean()) { // Probabilidad de colocar trampa
+                } else if (trampasRestantes > 0 && puedeColocar(matriz, fila, col, "X")) {
                     valor = "X";
                     trampasRestantes--;
                 }
             }
-        
             matriz[fila][col] = valor;
         }
-            // Avanzar al siguiente elemento de la matriz
-            if (col < 6) {
-                llenarMatriz(matriz, fila, col + 1, tesorosRestantes, trampasRestantes);
-            } else {
-                llenarMatriz(matriz, fila + 1, 0, tesorosRestantes, trampasRestantes);
+
+        // Avanzar al siguiente elemento de la matriz
+        if (col < 6) {
+            llenarMatriz(matriz, fila, col + 1, tesorosRestantes, trampasRestantes);
+        } else {
+            llenarMatriz(matriz, fila + 1, 0, tesorosRestantes, trampasRestantes);
+        }
+    }
+
+    // Comprueba si se puede colocar un elemento en una posición
+    public static boolean puedeColocar(String[][] matriz, int fila, int col, String tipo) {
+        int[][] direcciones = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // Arriba, abajo, izquierda, derecha
+
+        for (int[] dir : direcciones) {
+            int nuevaFila = fila + dir[0];
+            int nuevaCol = col + dir[1];
+            if (nuevaFila >= 0 && nuevaFila < matriz.length && nuevaCol >= 0 && nuevaCol < matriz[0].length) {
+                if (matriz[nuevaFila][nuevaCol].equals(tipo)) {
+                    return false; // Hay un tipo adyacente, no se puede colocar
+                }
             }
         }
+        return true;
+    }
+
+    // Imprime la matriz
+    public static void imprimirMatriz(String[][] matriz) {
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                System.out.print(matriz[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
     
     // Función para imprimir la matriz
 
