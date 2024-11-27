@@ -24,10 +24,15 @@ public class BTesoro extends javax.swing.JFrame {
     }
 
     public void CrearModelo() {
-        String[][] matriz = new String[7][7];
+        int filas = 20; // Número de filas de la matriz (puedes cambiarlo)
+        int columnas = 10; // Número de columnas de la matriz (puedes cambiarlo)
+        int tesoros = 7; // Número de tesoros
+        int trampas = 2; // Número de trampas
+
+        String[][] matriz = new String[filas][columnas];
         inicializarMatriz(matriz);
-        llenarMatriz(matriz, 0, 0, 5, 7);
-        Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7"});
+        llenarMatriz(matriz, 0, 0, tesoros, trampas);
+        Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
         Mapa.setModel(Modelo);
     }
 
@@ -250,8 +255,8 @@ public class BTesoro extends javax.swing.JFrame {
         });
     }
 
-    // Función recursiva para llenar la matriz
-public static void inicializarMatriz(String[][] matriz) {
+    // Inicializa la matriz con espacios vacíos
+    public static void inicializarMatriz(String[][] matriz) {
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[i].length; j++) {
                 matriz[i][j] = " ";
@@ -261,7 +266,7 @@ public static void inicializarMatriz(String[][] matriz) {
 
     // Función recursiva para llenar la matriz
     public static void llenarMatriz(String[][] matriz, int fila, int col, int tesorosRestantes, int trampasRestantes) {
-        if (fila == 7) {
+        if (fila == matriz.length) {
             return; // Caso base: se llenaron todas las filas
         }
 
@@ -293,7 +298,7 @@ public static void inicializarMatriz(String[][] matriz) {
         }
 
         // Avanzar al siguiente elemento de la matriz
-        if (col < 6) {
+        if (col < matriz[0].length - 1) {
             llenarMatriz(matriz, fila, col + 1, tesorosRestantes, trampasRestantes);
         } else {
             llenarMatriz(matriz, fila + 1, 0, tesorosRestantes, trampasRestantes);
@@ -325,9 +330,6 @@ public static void inicializarMatriz(String[][] matriz) {
             System.out.println();
         }
     }
-    
-    // Función para imprimir la matriz
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
     private javax.swing.ButtonGroup buttonGroup1;
