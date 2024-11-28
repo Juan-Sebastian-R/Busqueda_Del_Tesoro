@@ -63,7 +63,7 @@ public class BTesoro extends javax.swing.JFrame {
         Vida1 = new javax.swing.JButton();
         Vida2 = new javax.swing.JButton();
         Vida3 = new javax.swing.JButton();
-        jTextField2 = new javax.swing.JTextField();
+        Noti = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -184,8 +184,8 @@ public class BTesoro extends javax.swing.JFrame {
         Vida3.setFocusPainted(false);
         Vida3.setFocusable(false);
 
-        jTextField2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jTextField2.setFocusable(false);
+        Noti.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Noti.setFocusable(false);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("PISTAS");
@@ -210,7 +210,7 @@ public class BTesoro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(Noti, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
@@ -261,7 +261,7 @@ public class BTesoro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Noti, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -502,12 +502,15 @@ public class BTesoro extends javax.swing.JFrame {
 
             if (matriz[i][j].equals("T")) {
                 Modelo.setValueAt("T", i, j);
+                Noti.setText("Hallaste un tesoro, +1 Punto");
             } else if (matriz[i][j].equals("X")) {
                 Modelo.setValueAt("X", i, j);
+                Noti.setText("Caiste en una trampa -1 Vida");
             } else if (i == jugadorFila && j == jugadorColumna) {
                 Modelo.setValueAt("P", i, j); // P representa la posición del jugador
             } else {
                 Modelo.setValueAt(" ", i, j); // Vacío
+                Noti.setText("");
             }
         }
 
@@ -562,6 +565,7 @@ public class BTesoro extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
+    private javax.swing.JTextField Noti;
     private javax.swing.JButton Vida1;
     private javax.swing.JButton Vida2;
     private javax.swing.JButton Vida3;
@@ -580,6 +584,5 @@ public class BTesoro extends javax.swing.JFrame {
     private javax.swing.JSlider jSlider1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
