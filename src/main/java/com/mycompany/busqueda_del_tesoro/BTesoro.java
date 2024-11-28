@@ -19,7 +19,12 @@ public class BTesoro extends javax.swing.JFrame {
     int jugadorColumna = 0;
     int vidas = 3;
     int puntaje = 0;
-    int tesorosTotales = 7;
+    int tesorosTotales = 3;
+    int filas = 20;
+    int columnas = 10;
+    int trampas = 15;
+
+    String[][] matriz = new String[filas][columnas];
 
     /**
      * Creates new form BTesoro
@@ -31,11 +36,7 @@ public class BTesoro extends javax.swing.JFrame {
     }
 
     public void CrearModelo() {
-        int filas = 5;
-        int columnas = 5;
-        int trampas = 15;
 
-        String[][] matriz = new String[filas][columnas];
         inicializarMatriz(matriz);
         llenarMatriz(matriz, 0, 0, tesorosTotales, trampas);
         Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
@@ -274,19 +275,23 @@ public class BTesoro extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void botonDerechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDerechaActionPerformed
-        moverJugador(jugadorFila, jugadorColumna + 1);
+        moverJugador(jugadorFila, jugadorColumna + 1, matriz);
+        actualizarTablero();
     }//GEN-LAST:event_botonDerechaActionPerformed
 
     private void botonArribaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonArribaActionPerformed
-        moverJugador(jugadorFila - 1, jugadorColumna);        // TODO add your handling code here:
+        moverJugador(jugadorFila - 1, jugadorColumna, matriz);
+        actualizarTablero();// TODO add your handling code here:
     }//GEN-LAST:event_botonArribaActionPerformed
 
     private void botonAbajoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAbajoActionPerformed
-        moverJugador(jugadorFila + 1, jugadorColumna);        // TODO add your handling code here:
+        moverJugador(jugadorFila + 1, jugadorColumna, matriz);
+        actualizarTablero();        // TODO add your handling code here:
     }//GEN-LAST:event_botonAbajoActionPerformed
 
     private void botonIzquierdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIzquierdaActionPerformed
-        moverJugador(jugadorFila, jugadorColumna - 1);        // TODO add your handling code here:
+        moverJugador(jugadorFila, jugadorColumna - 1, matriz);
+        actualizarTablero();// TODO add your handling code here:
     }//GEN-LAST:event_botonIzquierdaActionPerformed
 
     /**
@@ -410,38 +415,52 @@ public class BTesoro extends javax.swing.JFrame {
         }
     }
 
-    private void moverJugador(int nuevaFila, int nuevaColumna) {
-        if (nuevaFila < 0 || nuevaFila >= Mapa.getRowCount() || nuevaColumna < 0 || nuevaColumna >= Mapa.getColumnCount()) {
-            return; // No permite salir de los límites
-        }
+    private void moverJugador(int nuevaFila, int nuevaColumna, String matriz[][]) {
+        if (nuevaFila >= 0 && nuevaFila < filas && nuevaColumna >= 0 && nuevaColumna < columnas) {
+            // Actualizar la matriz
+            matriz[jugadorFila][jugadorColumna] = " "; // Limpiar la casilla anterior
+            jugadorFila = nuevaFila;
+            jugadorColumna = nuevaColumna;
 
-        String contenido = (String) Modelo.getValueAt(nuevaFila, nuevaColumna);
-
-        if ("T".equals(contenido)) {
-            puntaje += 100;
-            tesorosTotales--;
-            if (tesorosTotales == 0) {
-                JOptionPane.showMessageDialog(this, "¡Ganaste!");
-                System.exit(0);
+            // Comprobar si el jugador encuentra un tesoro o una trampa
+            if (matriz[jugadorFila][jugadorColumna].equals("T")) {
+                puntaje++; // Aumentar puntaje
+                if (puntaje == 3) {
+                    // Fin del juego
+                    JOptionPane.showMessageDialog(this, "¡Has ganado!");
+                }
+            } else if (matriz[jugadorFila][jugadorColumna].equals("X")) {
+                vidas--; // Reducir vidas
+                if (vidas == 0) {
+                    // Fin del juego
+                    JOptionPane.showMessageDialog(this, "¡Has perdido todas las vidas!");
+                }
             }
-        } else if ("X".equals(contenido)) {
-            vidas--;
-            actualizarVidas();
-            if (vidas == 0) {
-                JOptionPane.showMessageDialog(this, "¡Game Over!");
-                System.exit(0);
-            }
-        }
 
-        Modelo.setValueAt(" ", jugadorFila, jugadorColumna); // Borra la posición anterior
-        jugadorFila = nuevaFila;
-        jugadorColumna = nuevaColumna;
-        Modelo.setValueAt("P", jugadorFila, jugadorColumna); // Actualiza la posición del jugador
-        actualizarPuntaje();
+            // Actualizar el puntaje y vidas
+            actualizarPuntaje();
+        }
     }
 
     private void actualizarPuntaje() {
         jTextField1.setText("Puntaje: " + puntaje);
+        if (vidas == 3) {
+            Vida1.setVisible(true);
+            Vida2.setVisible(true);
+            Vida3.setVisible(true);
+        } else if (vidas == 2) {
+            Vida1.setVisible(true);
+            Vida2.setVisible(true);
+            Vida3.setVisible(false);
+        } else if (vidas == 1) {
+            Vida1.setVisible(true);
+            Vida2.setVisible(false);
+            Vida3.setVisible(false);
+        } else {
+            Vida1.setVisible(false);
+            Vida2.setVisible(false);
+            Vida3.setVisible(false);
+        }
     }
 
     private void actualizarVidas() {
@@ -454,6 +473,23 @@ public class BTesoro extends javax.swing.JFrame {
         }
     }
 
+    public void actualizarTablero() {
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                // Si la casilla tiene un "T" (tesoro) o "X" (trampa), mostramos este valor
+                // Si la casilla está vacía, mostramos un espacio vacío
+                if (matriz[i][j].equals("T")) {
+                    Modelo.setValueAt("T", i, j);
+                } else if (matriz[i][j].equals("X")) {
+                    Modelo.setValueAt("X", i, j);
+                } else if (i == jugadorFila && j == jugadorColumna) {
+                    Modelo.setValueAt("P", i, j); // P representa la posición del jugador
+                } else {
+                    Modelo.setValueAt(" ", i, j); // Vacío
+                }
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
