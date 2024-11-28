@@ -27,7 +27,7 @@ public class BTesoro extends javax.swing.JFrame {
         int filas = 20; // Número de filas de la matriz (puedes cambiarlo)
         int columnas = 10; // Número de columnas de la matriz (puedes cambiarlo)
         int tesoros = 7; // Número de tesoros
-        int trampas = 10; // Número de trampas
+        int trampas = 15; // Número de trampas
 
         String[][] matriz = new String[filas][columnas];
         inicializarMatriz(matriz);
@@ -82,6 +82,9 @@ public class BTesoro extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        Mapa.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        Mapa.setEnabled(false);
+        Mapa.setRowSelectionAllowed(false);
         jScrollPane1.setViewportView(Mapa);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -91,10 +94,13 @@ public class BTesoro extends javax.swing.JFrame {
         jTextField1.setFocusable(false);
 
         jButton1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\DOWN.png")); // NOI18N
+        jButton1.setFocusPainted(false);
 
         jButton2.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\UP.png")); // NOI18N
+        jButton2.setFocusPainted(false);
 
         jButton3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\RIGHT.png")); // NOI18N
+        jButton3.setFocusPainted(false);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -102,6 +108,7 @@ public class BTesoro extends javax.swing.JFrame {
         });
 
         jButton4.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LEFT.png")); // NOI18N
+        jButton4.setFocusPainted(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -160,15 +167,18 @@ public class BTesoro extends javax.swing.JFrame {
         jButton8.setFocusable(false);
 
         jTextField2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jTextField2.setFocusable(false);
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("PISTAS");
 
         jButton6.setText("Solicitar Pista");
+        jButton6.setFocusPainted(false);
 
         jTextArea1.setColumns(20);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
+        jTextArea1.setFocusable(false);
         jScrollPane2.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
