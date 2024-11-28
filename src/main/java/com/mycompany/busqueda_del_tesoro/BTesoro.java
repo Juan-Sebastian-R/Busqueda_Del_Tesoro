@@ -16,10 +16,10 @@ public class BTesoro extends javax.swing.JFrame {
     int jugadorColumna = 0;
     int vidas = 3;
     int puntaje = 0;
-    int tesorosTotales = 3;
+    int tesorosTotales = 5;
     int filas = 20;
     int columnas = 10;
-    int trampas = 15;
+    int trampas = 17;
 
     String[][] matriz = new String[filas][columnas];
 
@@ -424,6 +424,7 @@ public class BTesoro extends javax.swing.JFrame {
                 puntaje++; // Aumentar puntaje
                 if (puntaje == 3) {
                     JOptionPane.showMessageDialog(this, "¡Has ganado!");
+                    reiniciarJuego();
                 }
             } else if (matriz[jugadorFila][jugadorColumna].equals("X")) {
                 vidas--; // Reducir vidas
@@ -496,7 +497,7 @@ public class BTesoro extends javax.swing.JFrame {
         }
 
         tabla.setDefaultRenderer(Object.class, new CustomCellRenderer());
-        
+
         if (casillasVisitadas[i][j]) { // Si la casilla ha sido visitada
 
             if (matriz[i][j].equals("T")) {
@@ -522,38 +523,41 @@ public class BTesoro extends javax.swing.JFrame {
     public void actualizarTablero() {
         actualizarTableroRecursivo(Modelo, 0, 0, Mapa); // Comienza desde la primera casilla
     }
-    
+
     public void reiniciarJuego() {
-    // Restablecer las variables del juego
-    jugadorFila = 0;
-    jugadorColumna = 0;
-    vidas = 3;
-    puntaje = 0;
-    inicializarMatriz(matriz);  // Reiniciar la matriz
-    llenarMatriz(matriz, 0, 0, tesorosTotales, trampas);  // Volver a llenar la matriz con tesoros y trampas
-
-    // Reiniciar la tabla
-    Modelo.setDataVector(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
-    actualizarTablero();
-
-    // Restablecer las vidas visibles
-    Vida1.setVisible(true);
-    Vida2.setVisible(true);
-    Vida3.setVisible(true);
-
-    // Actualizar puntaje en la interfaz
-    actualizarPuntaje();
-
-    // Limpiar las casillas visitadas
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            casillasVisitadas[i][j] = false;  // Restablecer todas las casillas a no visitadas
+        // Reiniciar las variables del jugador
+        jugadorFila = 0;
+        jugadorColumna = 0;
+        vidas = 3;
+        puntaje = 0;
+        // Limpiar la matriz
+        inicializarMatriz(matriz);
+        // Volver a llenar la matriz con los elementos iniciales (tesoros y trampas)
+        llenarMatriz(matriz, 0, 0, tesorosTotales, trampas);
+        // Limpiar las celdas visitadas
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                casillasVisitadas[i][j] = false;
+            }
         }
+        // Actualizar la tabla con la matriz reiniciada
+        Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
+        Mapa.setModel(Modelo);
+        // Limpiar las imágenes de vida
+        Vida1.setVisible(true);
+        Vida2.setVisible(true);
+        Vida3.setVisible(true);
+        // Actualizar el puntaje y las vidas
+        actualizarPuntaje();
+        // Reestablecer la tabla para reflejar los cambios
+        actualizarTableroRecursivo(Modelo, 0, 0, Mapa);
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                Modelo.setValueAt("", i, j); // Todas las casillas se inician como ocultas
+            }
+        }
+        imprimirMatriz(matriz);
     }
-
-    // Si se desea, mostrar un mensaje indicando que el juego ha sido reiniciado
-    JOptionPane.showMessageDialog(this, "El juego ha sido reiniciado.");
-}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
