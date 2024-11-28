@@ -6,6 +6,7 @@ package com.mycompany.busqueda_del_tesoro;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.Random;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,6 +15,11 @@ import java.util.Random;
 public class BTesoro extends javax.swing.JFrame {
 
     DefaultTableModel Modelo;
+    int jugadorFila = 0;
+    int jugadorColumna = 0;
+    int vidas = 3;
+    int puntaje = 0;
+    int tesorosTotales = 7;
 
     /**
      * Creates new form BTesoro
@@ -21,19 +27,21 @@ public class BTesoro extends javax.swing.JFrame {
     public BTesoro() {
         initComponents();
         CrearModelo();
+        actualizarPuntaje();
     }
 
     public void CrearModelo() {
-        int filas = 20; // Número de filas de la matriz (puedes cambiarlo)
-        int columnas = 10; // Número de columnas de la matriz (puedes cambiarlo)
-        int tesoros = 7; // Número de tesoros
-        int trampas = 15; // Número de trampas
+        int filas = 5;
+        int columnas = 5;
+        int trampas = 15;
 
         String[][] matriz = new String[filas][columnas];
         inicializarMatriz(matriz);
-        llenarMatriz(matriz, 0, 0, tesoros, trampas);
+        llenarMatriz(matriz, 0, 0, tesorosTotales, trampas);
         Modelo = new DefaultTableModel(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
         Mapa.setModel(Modelo);
+        inicializarTablaRecursiva(Modelo, filas, columnas, 0, 0);
+        imprimirMatriz(matriz);
     }
 
     /**
@@ -53,13 +61,13 @@ public class BTesoro extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        botonAbajo = new javax.swing.JButton();
+        botonArriba = new javax.swing.JButton();
+        botonDerecha = new javax.swing.JButton();
+        botonIzquierda = new javax.swing.JButton();
+        Vida1 = new javax.swing.JButton();
+        Vida2 = new javax.swing.JButton();
+        Vida3 = new javax.swing.JButton();
         jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jButton6 = new javax.swing.JButton();
@@ -93,22 +101,37 @@ public class BTesoro extends javax.swing.JFrame {
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField1.setFocusable(false);
 
-        jButton1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\DOWN.png")); // NOI18N
-        jButton1.setFocusPainted(false);
-
-        jButton2.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\UP.png")); // NOI18N
-        jButton2.setFocusPainted(false);
-
-        jButton3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\RIGHT.png")); // NOI18N
-        jButton3.setFocusPainted(false);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        botonAbajo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\DOWN.png")); // NOI18N
+        botonAbajo.setFocusPainted(false);
+        botonAbajo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                botonAbajoActionPerformed(evt);
             }
         });
 
-        jButton4.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LEFT.png")); // NOI18N
-        jButton4.setFocusPainted(false);
+        botonArriba.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\UP.png")); // NOI18N
+        botonArriba.setFocusPainted(false);
+        botonArriba.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonArribaActionPerformed(evt);
+            }
+        });
+
+        botonDerecha.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\RIGHT.png")); // NOI18N
+        botonDerecha.setFocusPainted(false);
+        botonDerecha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonDerechaActionPerformed(evt);
+            }
+        });
+
+        botonIzquierda.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LEFT.png")); // NOI18N
+        botonIzquierda.setFocusPainted(false);
+        botonIzquierda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonIzquierdaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -119,52 +142,52 @@ public class BTesoro extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(121, 121, 121)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2)))
+                            .addComponent(botonAbajo)
+                            .addComponent(botonArriba)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(41, 41, 41)
-                        .addComponent(jButton4)
+                        .addComponent(botonIzquierda)
                         .addGap(62, 62, 62)
-                        .addComponent(jButton3)))
+                        .addComponent(botonDerecha)))
                 .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
+                .addComponent(botonArriba)
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton4)
-                    .addComponent(jButton3))
+                    .addComponent(botonIzquierda)
+                    .addComponent(botonDerecha))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(botonAbajo)
                 .addGap(25, 25, 25))
         );
 
-        jButton5.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
-        jButton5.setBorder(null);
-        jButton5.setBorderPainted(false);
-        jButton5.setContentAreaFilled(false);
-        jButton5.setDefaultCapable(false);
-        jButton5.setFocusPainted(false);
-        jButton5.setFocusable(false);
+        Vida1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
+        Vida1.setBorder(null);
+        Vida1.setBorderPainted(false);
+        Vida1.setContentAreaFilled(false);
+        Vida1.setDefaultCapable(false);
+        Vida1.setFocusPainted(false);
+        Vida1.setFocusable(false);
 
-        jButton7.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
-        jButton7.setBorder(null);
-        jButton7.setBorderPainted(false);
-        jButton7.setContentAreaFilled(false);
-        jButton7.setDefaultCapable(false);
-        jButton7.setFocusPainted(false);
-        jButton7.setFocusable(false);
+        Vida2.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
+        Vida2.setBorder(null);
+        Vida2.setBorderPainted(false);
+        Vida2.setContentAreaFilled(false);
+        Vida2.setDefaultCapable(false);
+        Vida2.setFocusPainted(false);
+        Vida2.setFocusable(false);
 
-        jButton8.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
-        jButton8.setBorder(null);
-        jButton8.setBorderPainted(false);
-        jButton8.setContentAreaFilled(false);
-        jButton8.setDefaultCapable(false);
-        jButton8.setFocusPainted(false);
-        jButton8.setFocusable(false);
+        Vida3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Juan Sebastian\\Documents\\GitHub\\Busqueda_Del_Tesoro\\src\\main\\java\\com\\mycompany\\busqueda_del_tesoro\\LIFE.png")); // NOI18N
+        Vida3.setBorder(null);
+        Vida3.setBorderPainted(false);
+        Vida3.setContentAreaFilled(false);
+        Vida3.setDefaultCapable(false);
+        Vida3.setFocusPainted(false);
+        Vida3.setFocusable(false);
 
         jTextField2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jTextField2.setFocusable(false);
@@ -200,11 +223,11 @@ public class BTesoro extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jButton5)
+                                        .addComponent(Vida1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton7)
+                                        .addComponent(Vida2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton8))
+                                        .addComponent(Vida3))
                                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(4, 4, 4)
@@ -228,9 +251,9 @@ public class BTesoro extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addComponent(Vida1, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(Vida2, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(Vida3, javax.swing.GroupLayout.Alignment.TRAILING))
                             .addComponent(jLabel4)
                             .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -250,9 +273,21 @@ public class BTesoro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void botonDerechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDerechaActionPerformed
+        moverJugador(jugadorFila, jugadorColumna + 1);
+    }//GEN-LAST:event_botonDerechaActionPerformed
+
+    private void botonArribaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonArribaActionPerformed
+        moverJugador(jugadorFila - 1, jugadorColumna);        // TODO add your handling code here:
+    }//GEN-LAST:event_botonArribaActionPerformed
+
+    private void botonAbajoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonAbajoActionPerformed
+        moverJugador(jugadorFila + 1, jugadorColumna);        // TODO add your handling code here:
+    }//GEN-LAST:event_botonAbajoActionPerformed
+
+    private void botonIzquierdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonIzquierdaActionPerformed
+        moverJugador(jugadorFila, jugadorColumna - 1);        // TODO add your handling code here:
+    }//GEN-LAST:event_botonIzquierdaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -358,17 +393,79 @@ public class BTesoro extends javax.swing.JFrame {
             System.out.println();
         }
     }
+
+    public static void inicializarTablaRecursiva(DefaultTableModel modelo, int filas, int columnas, int i, int j) {
+        if (i >= filas) {
+            return; // Caso base: se recorrieron todas las filas
+        }
+
+        // Establece el valor en la celda actual
+        modelo.setValueAt(" ", i, j);
+
+        // Avanza al siguiente elemento
+        if (j < columnas - 1) {
+            inicializarTablaRecursiva(modelo, filas, columnas, i, j + 1); // Avanza en la misma fila
+        } else {
+            inicializarTablaRecursiva(modelo, filas, columnas, i + 1, 0); // Avanza a la siguiente fila
+        }
+    }
+
+    private void moverJugador(int nuevaFila, int nuevaColumna) {
+        if (nuevaFila < 0 || nuevaFila >= Mapa.getRowCount() || nuevaColumna < 0 || nuevaColumna >= Mapa.getColumnCount()) {
+            return; // No permite salir de los límites
+        }
+
+        String contenido = (String) Modelo.getValueAt(nuevaFila, nuevaColumna);
+
+        if ("T".equals(contenido)) {
+            puntaje += 100;
+            tesorosTotales--;
+            if (tesorosTotales == 0) {
+                JOptionPane.showMessageDialog(this, "¡Ganaste!");
+                System.exit(0);
+            }
+        } else if ("X".equals(contenido)) {
+            vidas--;
+            actualizarVidas();
+            if (vidas == 0) {
+                JOptionPane.showMessageDialog(this, "¡Game Over!");
+                System.exit(0);
+            }
+        }
+
+        Modelo.setValueAt(" ", jugadorFila, jugadorColumna); // Borra la posición anterior
+        jugadorFila = nuevaFila;
+        jugadorColumna = nuevaColumna;
+        Modelo.setValueAt("P", jugadorFila, jugadorColumna); // Actualiza la posición del jugador
+        actualizarPuntaje();
+    }
+
+    private void actualizarPuntaje() {
+        jTextField1.setText("Puntaje: " + puntaje);
+    }
+
+    private void actualizarVidas() {
+        if (vidas == 2) {
+            Vida3.setVisible(false);
+        } else if (vidas == 1) {
+            Vida2.setVisible(false);
+        } else if (vidas == 0) {
+            Vida1.setVisible(false);
+        }
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
+    private javax.swing.JButton Vida1;
+    private javax.swing.JButton Vida2;
+    private javax.swing.JButton Vida3;
+    private javax.swing.JButton botonAbajo;
+    private javax.swing.JButton botonArriba;
+    private javax.swing.JButton botonDerecha;
+    private javax.swing.JButton botonIzquierda;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
