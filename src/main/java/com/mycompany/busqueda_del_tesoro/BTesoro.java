@@ -1,17 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.mycompany.busqueda_del_tesoro;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.Random;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Juan Sebastian
- */
 public class BTesoro extends javax.swing.JFrame {
 
     DefaultTableModel Modelo;
@@ -26,9 +18,6 @@ public class BTesoro extends javax.swing.JFrame {
 
     String[][] matriz = new String[filas][columnas];
 
-    /**
-     * Creates new form BTesoro
-     */
     public BTesoro() {
         initComponents();
         CrearModelo();
@@ -415,30 +404,32 @@ public class BTesoro extends javax.swing.JFrame {
         }
     }
 
-    private void moverJugador(int nuevaFila, int nuevaColumna, String matriz[][]) {
+    private void moverJugador(int nuevaFila, int nuevaColumna, String[][] matriz) {
         if (nuevaFila >= 0 && nuevaFila < filas && nuevaColumna >= 0 && nuevaColumna < columnas) {
-            // Actualizar la matriz
-            matriz[jugadorFila][jugadorColumna] = " "; // Limpiar la casilla anterior
+            // Limpiar la casilla anterior
+            matriz[jugadorFila][jugadorColumna] = " ";
             jugadorFila = nuevaFila;
             jugadorColumna = nuevaColumna;
 
-            // Comprobar si el jugador encuentra un tesoro o una trampa
+            // Marcar la casilla como visitada
+            casillasVisitadas[jugadorFila][jugadorColumna] = true;
+
+            // Verificar si hay un tesoro o trampa
             if (matriz[jugadorFila][jugadorColumna].equals("T")) {
                 puntaje++; // Aumentar puntaje
                 if (puntaje == 3) {
-                    // Fin del juego
                     JOptionPane.showMessageDialog(this, "¡Has ganado!");
                 }
             } else if (matriz[jugadorFila][jugadorColumna].equals("X")) {
                 vidas--; // Reducir vidas
                 if (vidas == 0) {
-                    // Fin del juego
                     JOptionPane.showMessageDialog(this, "¡Has perdido todas las vidas!");
                 }
             }
 
             // Actualizar el puntaje y vidas
             actualizarPuntaje();
+            actualizarTableroRecursivo(Modelo, 0, 0); // Llamada recursiva para actualizar el tablero
         }
     }
 
@@ -473,22 +464,36 @@ public class BTesoro extends javax.swing.JFrame {
         }
     }
 
-    public void actualizarTablero() {
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                // Si la casilla tiene un "T" (tesoro) o "X" (trampa), mostramos este valor
-                // Si la casilla está vacía, mostramos un espacio vacío
-                if (matriz[i][j].equals("T")) {
-                    Modelo.setValueAt("T", i, j);
-                } else if (matriz[i][j].equals("X")) {
-                    Modelo.setValueAt("X", i, j);
-                } else if (i == jugadorFila && j == jugadorColumna) {
-                    Modelo.setValueAt("P", i, j); // P representa la posición del jugador
-                } else {
-                    Modelo.setValueAt(" ", i, j); // Vacío
-                }
+    boolean[][] casillasVisitadas = new boolean[filas][columnas];
+
+    public void actualizarTableroRecursivo(DefaultTableModel modelo, int i, int j) {
+        if (i >= filas) {
+            return; // Caso base: Se recorrieron todas las filas
+        }
+
+        if (casillasVisitadas[i][j]) { // Si la casilla ha sido visitada
+            if (matriz[i][j].equals("T")) {
+                Modelo.setValueAt("T", i, j);
+            } else if (matriz[i][j].equals("X")) {
+                Modelo.setValueAt("X", i, j);
+            } else if (i == jugadorFila && j == jugadorColumna) {
+                Modelo.setValueAt("P", i, j); // P representa la posición del jugador
+            } else {
+                Modelo.setValueAt(" ", i, j); // Vacío
             }
         }
+
+        // Avanza a la siguiente celda
+        if (j < columnas
+                - 1) {
+            actualizarTableroRecursivo(modelo, i, j + 1); // Avanza en la misma fila
+        } else {
+            actualizarTableroRecursivo(modelo, i + 1, 0); // Avanza a la siguiente fila
+        }
+    }
+
+    public void actualizarTablero() {
+        actualizarTableroRecursivo(Modelo, 0, 0); // Comienza desde la primera casilla
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
