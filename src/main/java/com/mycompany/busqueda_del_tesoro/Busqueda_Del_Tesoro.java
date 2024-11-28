@@ -14,6 +14,6 @@ public class Busqueda_Del_Tesoro {
     public static void main(String[] args) {
         BTesoro frame = new BTesoro();
         frame.setVisible(true);
-        frame.setSize(700, 700);
+        frame.setSize(1100, 550);
     }
 }
