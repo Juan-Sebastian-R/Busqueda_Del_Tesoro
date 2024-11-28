@@ -5,9 +5,38 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+import org.json.JSONObject;
+
+import com.sun.source.tree.BreakTree;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
+import org.json.JSONObject;
+import java.util.ArrayList;
+
 
 public class BTesoro extends javax.swing.JFrame {
 
@@ -65,9 +94,9 @@ public class BTesoro extends javax.swing.JFrame {
         Vida3 = new javax.swing.JButton();
         Noti = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
+        SolicitarPista = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        Pista = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -190,14 +219,19 @@ public class BTesoro extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("PISTAS");
 
-        jButton6.setText("Solicitar Pista");
-        jButton6.setFocusPainted(false);
+        SolicitarPista.setText("Solicitar Pista");
+        SolicitarPista.setFocusPainted(false);
+        SolicitarPista.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SolicitarPistaMouseClicked(evt);
+            }
+        });
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setFocusable(false);
-        jScrollPane2.setViewportView(jTextArea1);
+        Pista.setColumns(20);
+        Pista.setLineWrap(true);
+        Pista.setRows(5);
+        Pista.setFocusable(false);
+        jScrollPane2.setViewportView(Pista);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -232,7 +266,7 @@ public class BTesoro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton6))
+                        .addComponent(SolicitarPista))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
@@ -250,7 +284,7 @@ public class BTesoro extends javax.swing.JFrame {
                                 .addComponent(Vida2, javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(Vida3, javax.swing.GroupLayout.Alignment.TRAILING))
                             .addComponent(jLabel4)
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(SolicitarPista, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -287,6 +321,21 @@ public class BTesoro extends javax.swing.JFrame {
         moverJugador(jugadorFila, jugadorColumna - 1, matriz);
         actualizarTablero();// TODO add your handling code here:
     }//GEN-LAST:event_botonIzquierdaActionPerformed
+
+    private void SolicitarPistaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SolicitarPistaMouseClicked
+        String B = "Estoy jugando un juego de busqueda de tesoro, el tablero es una matriz bidimensional de 20 filas y 10 columnas, estoy en la fila: "
+                + Integer.toString(jugadorFila)
+                + ", y en la columna: "
+                + Integer.toString(jugadorColumna);
+        try {
+            // Enviar la pregunta a Ollama usando la clase Laboratorio
+            String RRespuesta = BTesoro.Chat(B);  // Llamada al método Chat de Laboratorio
+
+        } catch (IOException ex) {
+            Logger.getLogger(BTesoro.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Ocurrió un error al conectar con Ollama.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_SolicitarPistaMouseClicked
 
     /**
      * @param args the command line arguments
@@ -562,10 +611,61 @@ public class BTesoro extends javax.swing.JFrame {
         imprimirMatriz(matriz);
     }
 
+    public static String Chat(String a) throws MalformedURLException, IOException {
+
+        String modelName = "llama3.2:1b";
+        String promptText = a;
+
+        //url
+        URL url = new URL("http://localhost:11434/api/chat");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8;");
+        conn.setRequestProperty("accept", "application/json");
+        conn.setDoOutput(true);
+
+        //Mandar vainoso
+        String JsonInputString = String.format(
+                "{\"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false}", modelName, promptText);
+        // a a a 
+        try ( OutputStream os = conn.getOutputStream()) {
+            byte[] input = JsonInputString.getBytes(StandardCharsets.UTF_8);
+            os.write(input, 0, input.length);
+        }
+        // e e e 
+        // Verificar si la respuesta es exitosa
+        int code = conn.getResponseCode();
+        System.out.println("Response code: " + code);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while ((line = in.readLine()) != null) {
+            response.append(line);
+        }
+        in.close();
+
+// Mostrar la respuesta en la consola
+        System.out.println("Respuesta de Ollama: " + response.toString());
+
+//eaeae
+        JSONObject jsonresponse = new JSONObject(response.toString());
+        String responseText = jsonresponse.getString("response");
+        System.out.println("Respuesta: " + responseText);
+        // Cerrar la conexión
+        conn.disconnect();
+
+        return responseText;
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
     private javax.swing.JTextField Noti;
+    private javax.swing.JTextArea Pista;
+    private javax.swing.JButton SolicitarPista;
     private javax.swing.JButton Vida1;
     private javax.swing.JButton Vida2;
     private javax.swing.JButton Vida3;
@@ -574,7 +674,6 @@ public class BTesoro extends javax.swing.JFrame {
     private javax.swing.JButton botonDerecha;
     private javax.swing.JButton botonIzquierda;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
@@ -582,7 +681,6 @@ public class BTesoro extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSlider jSlider1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
