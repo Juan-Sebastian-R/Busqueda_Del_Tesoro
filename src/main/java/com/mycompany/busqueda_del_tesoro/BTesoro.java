@@ -429,6 +429,7 @@ public class BTesoro extends javax.swing.JFrame {
                 vidas--; // Reducir vidas
                 if (vidas == 0) {
                     JOptionPane.showMessageDialog(this, "¡Has perdido todas las vidas!");
+                    reiniciarJuego();
                 }
             }
 
@@ -521,6 +522,39 @@ public class BTesoro extends javax.swing.JFrame {
     public void actualizarTablero() {
         actualizarTableroRecursivo(Modelo, 0, 0, Mapa); // Comienza desde la primera casilla
     }
+    
+    public void reiniciarJuego() {
+    // Restablecer las variables del juego
+    jugadorFila = 0;
+    jugadorColumna = 0;
+    vidas = 3;
+    puntaje = 0;
+    inicializarMatriz(matriz);  // Reiniciar la matriz
+    llenarMatriz(matriz, 0, 0, tesorosTotales, trampas);  // Volver a llenar la matriz con tesoros y trampas
+
+    // Reiniciar la tabla
+    Modelo.setDataVector(matriz, new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
+    actualizarTablero();
+
+    // Restablecer las vidas visibles
+    Vida1.setVisible(true);
+    Vida2.setVisible(true);
+    Vida3.setVisible(true);
+
+    // Actualizar puntaje en la interfaz
+    actualizarPuntaje();
+
+    // Limpiar las casillas visitadas
+    for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < columnas; j++) {
+            casillasVisitadas[i][j] = false;  // Restablecer todas las casillas a no visitadas
+        }
+    }
+
+    // Si se desea, mostrar un mensaje indicando que el juego ha sido reiniciado
+    JOptionPane.showMessageDialog(this, "El juego ha sido reiniciado.");
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mapa;
