@@ -3,6 +3,11 @@ package com.mycompany.busqueda_del_tesoro;
 import javax.swing.table.DefaultTableModel;
 import java.util.Random;
 import javax.swing.JOptionPane;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
 public class BTesoro extends javax.swing.JFrame {
 
@@ -429,12 +434,12 @@ public class BTesoro extends javax.swing.JFrame {
 
             // Actualizar el puntaje y vidas
             actualizarPuntaje();
-            actualizarTableroRecursivo(Modelo, 0, 0); // Llamada recursiva para actualizar el tablero
+            actualizarTableroRecursivo(Modelo, 0, 0, Mapa); // Llamada recursiva para actualizar el tablero
         }
     }
 
     private void actualizarPuntaje() {
-        jTextField1.setText("Puntaje: " + puntaje);
+        jTextField1.setText(String.valueOf(puntaje));
         if (vidas == 3) {
             Vida1.setVisible(true);
             Vida2.setVisible(true);
@@ -466,12 +471,33 @@ public class BTesoro extends javax.swing.JFrame {
 
     boolean[][] casillasVisitadas = new boolean[filas][columnas];
 
-    public void actualizarTableroRecursivo(DefaultTableModel modelo, int i, int j) {
+    public class CustomCellRenderer implements TableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JLabel label = new JLabel(value.toString());
+            label.setOpaque(true);
+
+            // Restaurar el color de fondo por defecto (blanco) si no está visitada
+            if (!casillasVisitadas[row][column]) {
+                label.setBackground(Color.WHITE);
+            } else {
+                label.setBackground(Color.GREEN);  // Color verde para las celdas visitadas
+            }
+
+            return label;
+        }
+    }
+
+    public void actualizarTableroRecursivo(DefaultTableModel modelo, int i, int j, JTable tabla) {
         if (i >= filas) {
             return; // Caso base: Se recorrieron todas las filas
         }
 
+        tabla.setDefaultRenderer(Object.class, new CustomCellRenderer());
+        
         if (casillasVisitadas[i][j]) { // Si la casilla ha sido visitada
+
             if (matriz[i][j].equals("T")) {
                 Modelo.setValueAt("T", i, j);
             } else if (matriz[i][j].equals("X")) {
@@ -486,14 +512,14 @@ public class BTesoro extends javax.swing.JFrame {
         // Avanza a la siguiente celda
         if (j < columnas
                 - 1) {
-            actualizarTableroRecursivo(modelo, i, j + 1); // Avanza en la misma fila
+            actualizarTableroRecursivo(modelo, i, j + 1, Mapa); // Avanza en la misma fila
         } else {
-            actualizarTableroRecursivo(modelo, i + 1, 0); // Avanza a la siguiente fila
+            actualizarTableroRecursivo(modelo, i + 1, 0, Mapa); // Avanza a la siguiente fila
         }
     }
 
     public void actualizarTablero() {
-        actualizarTableroRecursivo(Modelo, 0, 0); // Comienza desde la primera casilla
+        actualizarTableroRecursivo(Modelo, 0, 0, Mapa); // Comienza desde la primera casilla
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
