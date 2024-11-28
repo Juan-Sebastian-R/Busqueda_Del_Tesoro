@@ -37,7 +37,6 @@ import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-
 public class BTesoro extends javax.swing.JFrame {
 
     DefaultTableModel Modelo;
@@ -329,7 +328,8 @@ public class BTesoro extends javax.swing.JFrame {
                 + Integer.toString(jugadorColumna);
         try {
             // Enviar la pregunta a Ollama usando la clase Laboratorio
-            String RRespuesta = BTesoro.Chat(B);  // Llamada al método Chat de Laboratorio
+            String Respuesta = BTesoro.Chat(B);  // Llamada al método Chat de Laboratorio
+            Pista.setText(Respuesta);
 
         } catch (IOException ex) {
             Logger.getLogger(BTesoro.class.getName()).log(Level.SEVERE, null, ex);
@@ -611,53 +611,51 @@ public class BTesoro extends javax.swing.JFrame {
         imprimirMatriz(matriz);
     }
 
-    public static String Chat(String a) throws MalformedURLException, IOException {
+    public static String Chat(String prompt) throws IOException {
+        String modelo = "llama3.2:1b";
 
-        String modelName = "llama3.2:1b";
-        String promptText = a;
-
-        //url
-        URL url = new URL("http://localhost:11434/api/chat");
+        URL url = new URL("http://localhost:11434/api/generate");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json; utf-8;");
-        conn.setRequestProperty("accept", "application/json");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setRequestProperty("Accept", "application/json");
         conn.setDoOutput(true);
 
-        //Mandar vainoso
-        String JsonInputString = String.format(
-                "{\"model\": \"%s\", \"prompt\": \"%s\", \"stream\": false}", modelName, promptText);
-        // a a a 
+        // Construcción segura del JSON
+        JSONObject inputJson = new JSONObject();
+        inputJson.put("model", modelo);
+        inputJson.put("prompt", prompt);
+        inputJson.put("stream", false);
+
+        String input = inputJson.toString();
+        System.out.println("Request JSON: " + input);
+
         try ( OutputStream os = conn.getOutputStream()) {
-            byte[] input = JsonInputString.getBytes(StandardCharsets.UTF_8);
-            os.write(input, 0, input.length);
+            byte[] inputjson = input.getBytes(StandardCharsets.UTF_8);
+            os.write(inputjson, 0, inputjson.length);
         }
-        // e e e 
-        // Verificar si la respuesta es exitosa
-        int code = conn.getResponseCode();
-        System.out.println("Response code: " + code);
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("Response Code: " + responseCode);
+        System.out.println("Response Message: " + conn.getResponseMessage());
+
+        if (responseCode != 200) {
+            throw new IOException("Failed: HTTP error code : " + responseCode);
+        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
         StringBuilder response = new StringBuilder();
         String line;
-
         while ((line = in.readLine()) != null) {
             response.append(line);
         }
         in.close();
 
-// Mostrar la respuesta en la consola
-        System.out.println("Respuesta de Ollama: " + response.toString());
-
-//eaeae
         JSONObject jsonresponse = new JSONObject(response.toString());
-        String responseText = jsonresponse.getString("response");
-        System.out.println("Respuesta: " + responseText);
-        // Cerrar la conexión
+        String responsetext = jsonresponse.getString("response");
+
         conn.disconnect();
-
-        return responseText;
-
+        return responsetext;
     }
 
 
