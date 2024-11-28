@@ -27,7 +27,7 @@ public class BTesoro extends javax.swing.JFrame {
         int filas = 20; // Número de filas de la matriz (puedes cambiarlo)
         int columnas = 10; // Número de columnas de la matriz (puedes cambiarlo)
         int tesoros = 7; // Número de tesoros
-        int trampas = 2; // Número de trampas
+        int trampas = 10; // Número de trampas
 
         String[][] matriz = new String[filas][columnas];
         inicializarMatriz(matriz);
@@ -176,12 +176,13 @@ public class BTesoro extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
@@ -197,8 +198,7 @@ public class BTesoro extends javax.swing.JFrame {
                                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(4, 4, 4)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jLabel1))
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -206,14 +206,14 @@ public class BTesoro extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton6))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,14 +225,14 @@ public class BTesoro extends javax.swing.JFrame {
                             .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane2)))
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -277,19 +277,20 @@ public class BTesoro extends javax.swing.JFrame {
             Random random = new Random();
             String valor = " ";
             if (tesorosRestantes > 0 || trampasRestantes > 0) {
+                // Intenta dispersar tesoros y trampas en regiones menos ocupadas
                 if (tesorosRestantes > 0 && trampasRestantes > 0) {
                     int aleatorio = random.nextInt(3); // 0: vacío, 1: tesoro, 2: trampa
-                    if (aleatorio == 1 && puedeColocar(matriz, fila, col, "T")) {
+                    if (aleatorio == 1 && puedeColocar(matriz, fila, col, "T") && estaDesperso(matriz, fila, col)) {
                         valor = "T";
                         tesorosRestantes--;
-                    } else if (aleatorio == 2 && puedeColocar(matriz, fila, col, "X")) {
+                    } else if (aleatorio == 2 && puedeColocar(matriz, fila, col, "X") && estaDesperso(matriz, fila, col)) {
                         valor = "X";
                         trampasRestantes--;
                     }
-                } else if (tesorosRestantes > 0 && puedeColocar(matriz, fila, col, "T")) {
+                } else if (tesorosRestantes > 0 && puedeColocar(matriz, fila, col, "T") && estaDesperso(matriz, fila, col)) {
                     valor = "T";
                     tesorosRestantes--;
-                } else if (trampasRestantes > 0 && puedeColocar(matriz, fila, col, "X")) {
+                } else if (trampasRestantes > 0 && puedeColocar(matriz, fila, col, "X") && estaDesperso(matriz, fila, col)) {
                     valor = "X";
                     trampasRestantes--;
                 }
@@ -315,6 +316,23 @@ public class BTesoro extends javax.swing.JFrame {
             if (nuevaFila >= 0 && nuevaFila < matriz.length && nuevaCol >= 0 && nuevaCol < matriz[0].length) {
                 if (matriz[nuevaFila][nuevaCol].equals(tipo)) {
                     return false; // Hay un tipo adyacente, no se puede colocar
+                }
+            }
+        }
+        return true;
+    }
+
+    // Verifica si una posición está dispersa de otros tesoros o trampas
+    public static boolean estaDesperso(String[][] matriz, int fila, int col) {
+        int rango = 2; // Define qué tan lejos debe estar de otros elementos
+        for (int i = -rango; i <= rango; i++) {
+            for (int j = -rango; j <= rango; j++) {
+                int nuevaFila = fila + i;
+                int nuevaCol = col + j;
+                if (nuevaFila >= 0 && nuevaFila < matriz.length && nuevaCol >= 0 && nuevaCol < matriz[0].length) {
+                    if (matriz[nuevaFila][nuevaCol].equals("T") || matriz[nuevaFila][nuevaCol].equals("X")) {
+                        return false; // Hay otro elemento en el rango definido
+                    }
                 }
             }
         }
